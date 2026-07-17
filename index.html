@@ -397,5 +397,22 @@
         }
     }, 1000);
 </script>
+    <!-- Background Music Element -->
+<audio id="bgMusic" loop>
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+    <script>
+  // Wait for the user to click or tap anywhere on the screen
+  document.body.addEventListener('click', function() {
+      const audio = document.getElementById('bgMusic');
+      
+      // If the audio exists and isn't playing yet, play it
+      if (audio && audio.paused) {
+          audio.play().catch(function(error) {
+              console.log("Browser blocked audio:", error);
+          });
+      }
+  }, { once: true }); // The 'once: true' means this only runs on the first tap
+</script>
 </body>
 </html>
