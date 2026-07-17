@@ -5,8 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nikkah Invitation - Noufi & Manzoor</title>
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Amiri&display=swap" rel="stylesheet">
+    <script>
+        // Some in-app browsers (WhatsApp, Instagram, Facebook) fail to resolve 100vh
+        // correctly and can collapse it to 0, causing the whole page to render blank.
+        // Measuring the real viewport height in JS and exposing it as --vh works around that.
+        (function () {
+            function setVH() {
+                document.documentElement.style.setProperty('--vh', window.innerHeight * 0.01 + 'px');
+            }
+            setVH();
+            window.addEventListener('resize', setVH);
+            window.addEventListener('orientationchange', setVH);
+        })();
+    </script>
     <style>
-        body { margin: 0; padding: 0; font-family: 'Playfair Display', serif; background-color: #f4e1e6; color: #3b2a2d; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        html { height: 100%; }
+        body { margin: 0; padding: 0; font-family: 'Playfair Display', serif; background-color: #f4e1e6; color: #3b2a2d; display: flex; justify-content: center; align-items: center; min-height: 100vh; height: calc(var(--vh, 1vh) * 100); height: 100dvh; overflow: hidden; }
         .container { width: 100%; max-width: 500px; height: 100%; max-height: 850px; position: relative; background: #fff; box-shadow: 0 0 20px rgba(0,0,0,0.3); overflow: hidden; }
         .page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; box-sizing: border-box; }
         .active { display: flex; }
