@@ -152,6 +152,27 @@
         }
 
         input, select { width: 90%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; font-family: 'Playfair Display', serif; }
+
+        /* Manual sound toggle - guaranteed fallback since mobile browsers don't always
+           honor auto-triggered unmute/play the same way as a direct tap on a real button. */
+        #sound-toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 42px;
+            height: 42px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            color: #8b5d6c;
+            font-size: 18px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+            cursor: pointer;
+        }
         
         /* Audio Container */
         #audio-wrapper {
@@ -172,6 +193,8 @@
 <div id="audio-wrapper"><div id="yt-audio-player"></div></div>
 
 <div class="container" id="app-container">
+    <button id="sound-toggle" onclick="toggleSound()" aria-label="Toggle background music">&#128264;</button>
+
     <!-- Page 1: Doors -->
     <div id="page1" class="page active" onclick="enterInvitation()">
         
@@ -286,10 +309,44 @@
     let currentPage = 1; // Keep track of the current page
 
     // Mobile browsers (iOS Safari, iOS Chrome, Android Chrome) block autoplay with sound.
-    // Muted autoplay is always allowed, so the player starts muted on load, and the tap
-    // on page 1 (a real user gesture) is used to unmute it - this is the reliable pattern
-    // for getting background music to actually play on phones.
+    // Muted autoplay is always allowed, so the player starts muted on load. A real tap is
+    // needed to unmute it, and since the player may still be loading at the moment of that
+    // first tap (slow connection), `wantsAudio` remembers the intent so onReady can finish
+    // the job. A persistent sound-toggle button is also shown as a guaranteed manual control,
+    // since a few mobile browsers still don't honor the automatic unmute in every case.
     let ytPlayer = null;
+    let wantsAudio = false;
+    let isMuted = true;
+
+    function updateSoundIcon() {
+        const btn = document.getElementById('sound-toggle');
+        if (btn) btn.innerHTML = isMuted ? '&#128263;' : '&#128264;';
+    }
+
+    function startAudio() {
+        wantsAudio = true;
+        if (ytPlayer && typeof ytPlayer.unMute === 'function') {
+            ytPlayer.unMute();
+            ytPlayer.playVideo();
+            isMuted = false;
+            updateSoundIcon();
+        }
+        const btn = document.getElementById('sound-toggle');
+        if (btn) btn.style.display = 'flex';
+    }
+
+    function toggleSound() {
+        if (!ytPlayer) return;
+        if (isMuted) {
+            ytPlayer.unMute();
+            ytPlayer.playVideo();
+            isMuted = false;
+        } else {
+            ytPlayer.mute();
+            isMuted = true;
+        }
+        updateSoundIcon();
+    }
 
     function onYouTubeIframeAPIReady() {
         ytPlayer = new YT.Player('yt-audio-player', {
@@ -308,6 +365,14 @@
                 onReady: function(e) {
                     e.target.mute();
                     e.target.playVideo();
+                    // The user already tapped before the player finished loading - finish
+                    // unmuting now that it's ready.
+                    if (wantsAudio) {
+                        e.target.unMute();
+                        e.target.playVideo();
+                        isMuted = false;
+                        updateSoundIcon();
+                    }
                 }
             }
         });
@@ -320,12 +385,9 @@
     })();
 
     function enterInvitation() {
-        // Unmute + play inside the tap handler itself, so the browser treats this as the
-        // user gesture that enables sound.
-        if (ytPlayer && typeof ytPlayer.unMute === 'function') {
-            ytPlayer.unMute();
-            ytPlayer.playVideo();
-        }
+        // Trigger inside the tap handler itself, so the browser treats this as the user
+        // gesture that enables sound.
+        startAudio();
 
         // Hide front elements smoothly
         document.getElementById('center-heart').style.opacity = '0';
