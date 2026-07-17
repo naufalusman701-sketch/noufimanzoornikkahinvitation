@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nikkah Invitation - Noufi & Manzoor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Amiri&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Playfair Display', serif; background-color: #f4e1e6; color: #3b2a2d; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        .container { width: 100%; max-width: 500px; height: 100%; max-height: 850px; position: relative; background: #fff; box-shadow: 0 0 20px rgba(0,0,0,0.3); overflow: hidden; }
+        .page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; box-sizing: border-box; }
+        .active { display: flex; }
+        
+        /* Shared Styles */
+        .bismillah { font-family: 'Amiri', serif; font-size: 24px; color: #5a454d; margin-bottom: 15px; }
+        .overlay { background: rgba(255, 255, 255, 0.88); padding: 25px; border-radius: 15px; width: 85%; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        
+        /* Stacked Names Styling */
+        .names-stack { font-family: 'Great Vibes', cursive; font-size: 45px; color: #8b5d6c; line-height: 1.1; margin: 15px 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.05); }
+        .names-stack .with { font-family: 'Playfair Display', serif; font-size: 20px; color: #5a454d; font-style: italic; margin: 5px 0; }
+        
+        /* Door Styles & Perfect Alignment (Page 1) */
+        #page1 { background-color: #000; padding: 0; cursor: pointer; }
+        .door { position: absolute; top: 0; width: 50%; height: 100%; background-image: url('https://images.weserv.nl/?url=https://www.womangettingmarried.com/wp-content/uploads/2025/03/rustic-wooden-wedding-entrance-683x1024.jpg'); background-size: cover; transition: transform 1.5s ease-in-out; z-index: 5; }
+        #door-left { left: 0; transform-origin: left; background-position: left center; }
+        #door-right { right: 0; transform-origin: right; background-position: right center; }
+        
+        .monogram { 
+            font-family: 'Great Vibes', cursive; 
+            font-size: 80px; 
+            color: #d4af37; 
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.7);
+            position: absolute;
+            top: 45%;
+            transform: translateY(-50%);
+        }
+
+        /* Heart with 'with' perfectly centered between doors */
+        .center-heart {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 65px;
+            height: 65px;
+            z-index: 15;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            transition: opacity 0.4s ease-out;
+        }
+
+        .heart-icon {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0px 3px 5px rgba(0,0,0,0.6));
+        }
+
+        .center-heart .with-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 15px;
+            font-style: italic;
+            color: #fff;
+            z-index: 16;
+            margin-top: -6px; /* visually center text in the physical heart shape */
+            font-weight: 600;
+        }
+        
+        /* Tap to Open Button Centered Perfectly below Monograms */
+        .tap-to-open {
+            position: absolute;
+            top: 68%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Playfair Display', serif;
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            background: rgba(139, 93, 108, 0.95);
+            padding: 12px 30px;
+            border-radius: 30px;
+            z-index: 20;
+            pointer-events: none;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            animation: flashPulse 1.5s infinite ease-in-out;
+            white-space: nowrap;
+        }
+
+        /* Page Backgrounds */
+        #page2 { background-image: url('https://static.vecteezy.com/system/resources/thumbnails/047/153/175/small/beautiful-outdoor-wedding-floral-arrangement-with-free-photo.jpeg'); background-size: cover; background-position: center; }
+        #page3 { background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxpjBxxvYLhsNi4eJW8uQdKcnbZcnTE-wLQq_d_lm05upD6XOaty6N6Rho&s=10'); background-size: cover; }
+        #page4 { background-image: url('https://i.pinimg.com/736x/7e/dd/a1/7edda1107b008c7c05a363b2925cef5e.jpg'); background-size: cover; background-position: center; } 
+        #page5 { background-image: url('https://i.pinimg.com/736x/99/f6/09/99f609dd756ed009c7e2f7835e279cee.jpg'); background-size: cover; background-position: center; }
+        
+        /* Interactive Scratch (Page 3) */
+        .scratch-container { position: relative; width: 220px; height: 100px; margin: 20px auto; z-index: 50; }
+        #scratchCanvas { position: absolute; top: 0; left: 0; z-index: 60; cursor: pointer; border-radius: 10px; }
+        .date-box { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; background: #fff; border-radius: 10px; border: 2px dashed #8b5d6c; }
+        
+        /* Countdown Formatted (Page 5) */
+        .countdown-container { display: flex; gap: 8px; justify-content: center; margin: 15px 0; }
+        .time-box { background: rgba(255, 255, 255, 0.9); border: 1px solid #8b5d6c; padding: 10px; border-radius: 8px; width: 55px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .time-box span { display: block; font-size: 22px; font-weight: bold; color: #8b5d6c; }
+        .time-box small { font-size: 10px; color: #5a454d; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; }
+
+        /* Buttons & Forms */
+        .btn { background: #8b5d6c; color: #fff; border: none; padding: 12px 25px; border-radius: 25px; cursor: pointer; margin-top: 10px; font-family: 'Playfair Display', serif; font-size: 16px; }
+        
+        /* Flashing Navigation Buttons */
+        .nav-btn { 
+            position: absolute; 
+            bottom: 20px; 
+            background: rgba(255, 255, 255, 0.9); 
+            border: none; 
+            font-size: 22px; 
+            cursor: pointer; 
+            color: #8b5d6c; 
+            z-index: 100; 
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+            animation: flashPulse 1.2s infinite ease-in-out;
+        }
+
+        @keyframes flashPulse {
+            0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.08); }
+        }
+        
+        .nav-btn {
+            animation: navPulse 1.2s infinite ease-in-out;
+        }
+        
+        @keyframes navPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.6; transform: scale(1.15); }
+        }
+
+        input, select { width: 90%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 8px; font-family: 'Playfair Display', serif; }
+        
+        /* Audio Container */
+        #audio-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            z-index: -100;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Dynamically injected audio will go here -->
+<div id="audio-wrapper"></div>
+
+<div class="container" id="app-container">
+    <!-- Page 1: Doors -->
+    <div id="page1" class="page active" onclick="enterInvitation()">
+        
+        <div id="door-left" class="door">
+            <!-- N positioned on the right edge of the left door -->
+            <div class="monogram" style="right: 35px;">N</div>
+        </div>
+        
+        <!-- Golden Heart placed exactly in the middle split -->
+        <div class="center-heart" id="center-heart">
+            <svg viewBox="0 0 32 29.6" class="heart-icon">
+                <path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2 c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z" fill="#d4af37"/>
+            </svg>
+            <div class="with-text">with</div>
+        </div>
+        
+        <div id="door-right" class="door">
+             <!-- M positioned on the left edge of the right door -->
+            <div class="monogram" style="left: 35px;">M</div>
+        </div>
+        
+        <div class="tap-to-open">Tap to Open</div>
+    </div>
+
+    <!-- Page 2: Invitation Title -->
+    <div id="page2" class="page">
+        <div class="overlay">
+            <div class="bismillah">بِسْمِ ٱللّٰهِ ٱلرَّحْمٰنِ ٱلرَّحِيمِ</div>
+            <p>Kindly join us for the Engagement & Nikkah ceremony of</p>
+            <div class="names-stack">
+                Noufi
+                <div class="with">with</div>
+                Manzoor
+            </div>
+        </div>
+        <button class="nav-btn" style="right: 20px;" onclick="goToPage(3)">&#8594;</button>
+    </div>
+
+    <!-- Page 3: Date Reveal -->
+    <div id="page3" class="page">
+        <div class="overlay">
+            <p style="font-size: 18px; font-weight: 600; color: #5a454d;">Scratch to reveal the Date!</p>
+            <div class="scratch-container">
+                <div class="date-box">
+                    <p style="font-size: 20px; font-weight: bold; color: #8b5d6c; margin: 0;">02 August 2026</p>
+                </div>
+                <canvas id="scratchCanvas"></canvas>
+            </div>
+        </div>
+        <button class="nav-btn" style="left: 20px;" onclick="goToPage(2)">&#8592;</button>
+        <button class="nav-btn" style="right: 20px;" onclick="goToPage(4)">&#8594;</button>
+    </div>
+
+    <!-- Page 4: Spiritual Invitation & Details -->
+    <div id="page4" class="page">
+        <div class="overlay">
+            <div class="bismillah">بِسْمِ ٱللّٰهِ ٱلرَّحْمٰنِ ٱلرَّحِيمِ</div>
+            <p style="font-size: 13.5px; font-style: italic; line-height: 1.5;">"And among His signs is that He created for you mates from among yourselves that you may find tranquility in them; and He placed between you affection and mercy."</p>
+            
+            <p style="font-size: 14.5px; margin-top: 15px; line-height: 1.5;">With hearts full of gratitude to Almighty Allah, we cordially request the honor of your presence and blessings at the Nikkah Ceremony of</p>
+            
+            <div class="names-stack" style="margin: 20px 0;">
+                Noufi
+                <div class="with">with</div>
+                Manzoor
+            </div>
+            
+            <p style="font-size: 14px; line-height: 1.6; border-top: 1px solid #ccc; padding-top: 10px; margin-bottom: 0;">
+                <strong>Date:</strong> 02 August 2026<br>
+                <strong>Time:</strong> 11:30 AM<br>
+                <strong>Venue:</strong> Choice Plaza, Kumarapuram, Haripad
+            </p>
+        </div>
+        <button class="nav-btn" style="left: 20px;" onclick="goToPage(3)">&#8592;</button>
+        <button class="nav-btn" style="right: 20px;" onclick="goToPage(5)">&#8594;</button>
+    </div>
+
+    <!-- Page 5: RSVP & QR -->
+    <div id="page5" class="page">
+        <div class="overlay">
+            <h3 style="font-family: 'Great Vibes', cursive; font-size: 35px; color: #8b5d6c; margin: 0 0 10px 0;">Countdown to Nikkah</h3>
+            
+            <div class="countdown-container">
+                <div class="time-box"><span id="cd-days">00</span><small>Days</small></div>
+                <div class="time-box"><span id="cd-hours">00</span><small>Hours</small></div>
+                <div class="time-box"><span id="cd-mins">00</span><small>Mins</small></div>
+                <div class="time-box"><span id="cd-secs">00</span><small>Secs</small></div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+            
+            <h3 style="margin: 0 0 10px 0; color: #5a454d;">RSVP</h3>
+            <form onsubmit="sendRSVP(event)">
+                <select id="attendance">
+                    <option value="Will Attend">Will Attend</option>
+                    <option value="Will Not Attend">Will Not Attend</option>
+                </select>
+                <input type="number" id="guests" placeholder="Number of members joining" min="1">
+                <button type="submit" class="btn">Send RSVP</button>
+            </form>
+            
+            <div style="margin-top: 20px;">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=https://maps.app.goo.gl/phMLzJthgLUGFUAV8" alt="Location Map" style="border: 2px solid #8b5d6c; border-radius: 8px;">
+                <p style="font-size: 13px; margin-top: 5px; font-weight: bold;">Scan for Location Map</p>
+            </div>
+        </div>
+        <button class="nav-btn" style="left: 20px;" onclick="goToPage(4)">&#8592;</button>
+    </div>
+</div>
+
+<script>
+    let audioInjected = false;
+    let currentPage = 1; // Keep track of the current page
+
+    function enterInvitation() {
+        // Only inject the audio on the very first click to prevent reloading
+        if (!audioInjected) {
+            document.getElementById('audio-wrapper').innerHTML = 
+                `<iframe width="20" height="20" src="https://www.youtube.com/embed/hLo_MbhAYWc?autoplay=1&loop=1&playlist=hLo_MbhAYWc&playsinline=1" 
+                title="Audio Player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+            audioInjected = true;
+        }
+
+        // Hide front elements smoothly
+        document.getElementById('center-heart').style.opacity = '0';
+        document.querySelector('.tap-to-open').style.display = 'none';
+        
+        // Door Animation
+        document.getElementById('door-left').style.transform = 'perspective(1200px) rotateY(-105deg)';
+        document.getElementById('door-right').style.transform = 'perspective(1200px) rotateY(105deg)';
+        
+        setTimeout(() => goToPage(2), 1200);
+    }
+    
+    function goToPage(n) {
+        if (n < 2 || n > 5) return; // Restrict bounds
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById('page' + n).classList.add('active');
+        currentPage = n; // Update global page state
+        if(n === 3) initScratchCard();
+    }
+    
+    function initScratchCard() {
+        const c = document.getElementById('scratchCanvas');
+        const ctx = c.getContext('2d');
+        c.width = 220; c.height = 100;
+        ctx.fillStyle = '#8b5d6c'; 
+        ctx.fillRect(0,0, c.width, c.height);
+        
+        ctx.globalCompositeOperation = 'destination-out';
+        
+        let isDrawing = false;
+        
+        function scratch(e) {
+            if (!isDrawing) return;
+            let rect = c.getBoundingClientRect();
+            let x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+            let y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+            ctx.beginPath(); 
+            ctx.arc(x, y, 18, 0, Math.PI*2); 
+            ctx.fill();
+        }
+
+        c.onmousedown = () => isDrawing = true;
+        c.onmouseup = () => isDrawing = false;
+        c.onmousemove = scratch;
+        c.addEventListener('touchstart', (e) => { isDrawing = true; scratch(e); }, {passive: false});
+        c.addEventListener('touchmove', (e) => { e.preventDefault(); scratch(e); }, {passive: false});
+        c.addEventListener('touchend', () => isDrawing = false);
+    }
+
+    /* --- SWIPE DETECTION LOGIC ADDED HERE --- */
+    let startY = 0;
+    let endY = 0;
+    const appContainer = document.getElementById('app-container');
+
+    appContainer.addEventListener('touchstart', (e) => {
+        // Prevent swipe detection if they are trying to scratch the card
+        if (e.target.id === 'scratchCanvas') return;
+        startY = e.changedTouches[0].screenY;
+    }, {passive: true});
+
+    appContainer.addEventListener('touchend', (e) => {
+        if (e.target.id === 'scratchCanvas') return;
+        endY = e.changedTouches[0].screenY;
+        handleSwipe();
+    }, {passive: true});
+
+    function handleSwipe() {
+        // Ignore swipe actions on Page 1
+        if (currentPage < 2) return;
+
+        const swipeThreshold = 50; 
+        const diffY = startY - endY;
+
+        if (diffY > swipeThreshold) {
+            // Swiped up -> Next page
+            if (currentPage < 5) {
+                goToPage(currentPage + 1);
+            }
+        } else if (diffY < -swipeThreshold) {
+            // Swiped down -> Previous page
+            if (currentPage > 2) {
+                goToPage(currentPage - 1);
+            }
+        }
+    }
+    /* ---------------------------------------- */
+    
+    function sendRSVP(e) {
+        e.preventDefault();
+        const att = document.getElementById('attendance').value;
+        const count = document.getElementById('guests').value;
+        window.location.href = `mailto:naufalusman701@gmail.com?subject=RSVP for Nikkah&body=Attendance Status: ${att}%0ANumber of Guests: ${count}`;
+    }
+    
+    const targetDate = new Date("August 2, 2026 11:30:00").getTime();
+    
+    setInterval(() => {
+        let now = new Date().getTime();
+        let distance = targetDate - now;
+        
+        if (distance > 0) {
+            document.getElementById('cd-days').innerText = Math.floor(distance / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
+            document.getElementById('cd-hours').innerText = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+            document.getElementById('cd-mins').innerText = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+            document.getElementById('cd-secs').innerText = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
+        }
+    }, 1000);
+</script>
+</body>
+</html>
