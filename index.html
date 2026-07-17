@@ -6,7 +6,12 @@
     <title>Nikkah Invitation - Noufi & Manzoor</title>
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Amiri&display=swap" rel="stylesheet">
     <style>
-        body { margin: 0; padding: 0; font-family: 'Playfair Display', serif; background-color: #f4e1e6; color: #3b2a2d; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        html, body { height: 100%; }
+        body { margin: 0; padding: 0; font-family: 'Playfair Display', serif; background-color: #f4e1e6; color: #3b2a2d; display: flex; justify-content: center; align-items: center; height: 100vh; height: 100dvh; overflow: hidden; }
+        /* iOS Safari/Chrome (WebKit) fallback: 100vh includes the area hidden behind the address bar, cutting off the bottom of the page. */
+        @supports (-webkit-touch-callout: none) {
+            body { height: -webkit-fill-available; }
+        }
         .container { width: 100%; max-width: 500px; height: 100%; max-height: 850px; position: relative; background: #fff; box-shadow: 0 0 20px rgba(0,0,0,0.3); overflow: hidden; }
         .page { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: none; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; box-sizing: border-box; }
         .active { display: flex; }
@@ -163,8 +168,8 @@
 </head>
 <body>
 
-<!-- Dynamically injected audio will go here -->
-<div id="audio-wrapper"></div>
+<!-- Background music player (YouTube IFrame API) -->
+<div id="audio-wrapper"><div id="yt-audio-player"></div></div>
 
 <div class="container" id="app-container">
     <!-- Page 1: Doors -->
@@ -278,16 +283,48 @@
 </div>
 
 <script>
-    let audioInjected = false;
     let currentPage = 1; // Keep track of the current page
 
+    // Mobile browsers (iOS Safari, iOS Chrome, Android Chrome) block autoplay with sound.
+    // Muted autoplay is always allowed, so the player starts muted on load, and the tap
+    // on page 1 (a real user gesture) is used to unmute it - this is the reliable pattern
+    // for getting background music to actually play on phones.
+    let ytPlayer = null;
+
+    function onYouTubeIframeAPIReady() {
+        ytPlayer = new YT.Player('yt-audio-player', {
+            videoId: 'hLo_MbhAYWc',
+            width: '1',
+            height: '1',
+            playerVars: {
+                autoplay: 1,
+                mute: 1,
+                loop: 1,
+                playlist: 'hLo_MbhAYWc',
+                playsinline: 1,
+                controls: 0
+            },
+            events: {
+                onReady: function(e) {
+                    e.target.mute();
+                    e.target.playVideo();
+                }
+            }
+        });
+    }
+
+    (function loadYouTubeAPI() {
+        const tag = document.createElement('script');
+        tag.src = 'https://www.youtube.com/iframe_api';
+        document.head.appendChild(tag);
+    })();
+
     function enterInvitation() {
-        // Only inject the audio on the very first click to prevent reloading
-        if (!audioInjected) {
-            document.getElementById('audio-wrapper').innerHTML = 
-                `<iframe width="20" height="20" src="https://www.youtube.com/embed/hLo_MbhAYWc?autoplay=1&loop=1&playlist=hLo_MbhAYWc&playsinline=1" 
-                title="Audio Player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-            audioInjected = true;
+        // Unmute + play inside the tap handler itself, so the browser treats this as the
+        // user gesture that enables sound.
+        if (ytPlayer && typeof ytPlayer.unMute === 'function') {
+            ytPlayer.unMute();
+            ytPlayer.playVideo();
         }
 
         // Hide front elements smoothly
