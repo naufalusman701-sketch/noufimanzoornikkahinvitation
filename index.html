@@ -397,22 +397,42 @@
         }
     }, 1000);
 </script>
-    <!-- Background Music Element -->
-<audio id="bgMusic" loop>
-  <source src="music.mp3" type="audio/mpeg">
-</audio>
-    <script>
-  // Wait for the user to click or tap anywhere on the screen
-  document.body.addEventListener('click', function() {
-      const audio = document.getElementById('bgMusic');
-      
-      // If the audio exists and isn't playing yet, play it
-      if (audio && audio.paused) {
-          audio.play().catch(function(error) {
-              console.log("Browser blocked audio:", error);
-          });
+    <!-- Hidden Div for YouTube Player -->
+<div id="hidden-youtube-player" style="display: none;"></div>
+
+<!-- Load the YouTube API -->
+<script src="https://www.youtube.com/iframe_api"></script>
+
+<!-- Setup the Player and Click Trigger -->
+<script>
+  let player;
+  
+  // This function runs automatically when the YouTube API loads
+  function onYouTubeIframeAPIReady() {
+    player = new YT.Player('hidden-youtube-player', {
+      height: '0',
+      width: '0',
+      videoId: 'hLo_MbhAYWc', 
+      playerVars: {
+        'autoplay': 0,
+        'controls': 0,
+        'loop': 1,
+        'playlist': 'hLo_MbhAYWc' 
+      },
+      events: {
+        'onReady': onPlayerReady
       }
-  }, { once: true }); // The 'once: true' means this only runs on the first tap
+    });
+  }
+
+  // When the hidden player is fully loaded and ready
+  function onPlayerReady(event) {
+    // Wait for the guest to tap anywhere on the invitation
+    document.body.addEventListener('click', function() {
+        player.playVideo();
+    }, { once: true }); 
+  }
+</script>
 </script>
 </body>
 </html>
